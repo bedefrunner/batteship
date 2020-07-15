@@ -17,9 +17,7 @@ const Cell = ({ cell, i, j, handleHover, handleClick, gameStarted, onShipDrop })
     e.stopPropagation();
     e.preventDefault();
     const shipType = e.dataTransfer.getData('draggableInfo');
-    cell.type = shipType;
-    cell.status = "occuppied";
-    onShipDrop(cell, i, j)
+    onShipDrop(i, j, shipType);
   }
   const dragOver = (e) => {
     e.preventDefault();

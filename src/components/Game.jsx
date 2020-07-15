@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { generateGrid, generateGrid2, createPlayer } from '../utils/gameHelpers';
+import { generateGrid, getNewShips, createPlayer } from '../utils/gameHelpers';
 import Grid from './Grid';
 import "../styles/Game.css";
 import ShipSelector from './shipSelector';
@@ -8,24 +8,28 @@ import ShipSelector from './shipSelector';
 export default function Game() {
   const [myTurn, setMyTurn] = useState(true);
   const [gameStarted, setGameStarted] = useState(false);
-  const [moving, setMoving] = useState(false);
-  const [firing, setFiring] = useState(false);
-  const [player, setPlayer] = useState(createPlayer());
+  const [action, setAction] = useState('moving'); // or firing
   const [grid, setGrid] = useState(generateGrid());
-
+  const [ships, setShips] = useState(getNewShips());
 
   const updateGrid = (row, col) => {
   }
 
-  const onShipDrop = (cell, i, j) => {
-    console.log('onShipDrop!!!!!!!!!!!');
-    console.log(cell, i, j);
+  const onShipDrop = (row, col, shipType) => {
+    if (grid[row][col].status === 'occupied') {
+      return null;
+    }
     let newGrid = [];
     for (let i = 0; i < grid.length; i++) {
       newGrid[i] = grid[i].slice();
     }
-    newGrid[i][j] = cell;
+    newGrid[row][col] = { status: "occupied", hover: false, hit: false, type: shipType };
     setGrid(newGrid);
+
+    let newShips = ships.slice();
+    const shipIndex = newShips.findIndex(s => s.type === shipType);
+    newShips[shipIndex].displayed = true;
+    setShips(newShips);
   }
 
   const renderGrid = () => {
@@ -40,27 +44,17 @@ export default function Game() {
     );
   }
 
-  const handleShipSelect = (selectedShip) => {
-    const newPlayer = {...player};
-    newPlayer.ships.forEach(ship => {
-      if (ship.type === selectedShip.type) {
-        ship.displayed = true;
-      }
-    })
-    setPlayer(newPlayer);
-
-  }
 
   const renderShips = () => {
-    return player.ships.map(ship => {
+    return ships.map(ship => {
       const dragStart = (e) => {
         e.dataTransfer.setData("draggableInfo", ship.type);
       }
       return(
         ship.displayed ?
-        <button type="button" className="ships-selector-button" disabled>{ship.type}</button>
+        <button className="ships-selector-button" disabled>{ship.type}</button>
         :
-        <button draggable onDragStart={dragStart} type="button" className="ships-selector-button" onClick={() => handleShipSelect(ship)}>{ship.type}</button>
+        <button draggable onDragStart={dragStart} className="ships-selector-button">{ship.type}</button>
       )
     })
   }
