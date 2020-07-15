@@ -13,10 +13,7 @@ export default function Game() {
   const [grid, setGrid] = useState(generateGrid());
   const [ships, setShips] = useState(getNewShips());
   const [selectedShip, setSelectedShip] = useState();
-  const [logs, setLogs] = useState(['hola', 'chao', 'que', 'te', 'vaya', 'super', 'bien', 'querido', 'amigo']);
-
-  const updateGrid = (row, col) => {
-  }
+  const [logs, setLogs] = useState({});
 
   const onShipDrop = (row, col, shipId) => {
     if (grid[row][col].status === 'occupied') {
@@ -51,6 +48,14 @@ export default function Game() {
     setGrid(generateGrid());
   }
 
+  const handleLog = (message) => {
+    let newLogs = {...logs}
+    const size = Object.keys(newLogs).length;
+    newLogs[size] = message;
+    console.log(newLogs);
+    setLogs(newLogs);
+  }
+
   const handleMove = (oldRow, oldCol, newRow, newCol) => {
     let newGrid = [];
     for (let i = 0; i < grid.length; i++) {
@@ -62,8 +67,14 @@ export default function Game() {
     newGrid[newRow][newCol] = { status: "occupied", hover: false, hit: false, ship: ship };
     setGrid(newGrid);
     setSelectedShip(null);
-    setAction(null);
+    handleAction(null);
     //setMyTurn(false);
+    
+    let direction = 'NORTE';
+    if (newRow > oldRow) { direction = 'SUR'}
+    else if (oldCol < newCol) { direction = 'OESTE'}
+    else if (newCol < oldCol) { direction = 'ESTE'}
+    handleLog(`[USER]: MOVE - ${ship.id} - ${direction}`);
   }
 
   const onClickCell = (row, col) => {
@@ -101,6 +112,11 @@ export default function Game() {
 
   const handlePlay = () => {
     setGameStarted(true);
+  }
+
+  const handleCancel = () => {
+    setAction(null);
+    setSelectedShip(null);
   }
 
   const handleAction = (action) => {
@@ -157,7 +173,7 @@ export default function Game() {
               <button onClick={() => handleAction('fire')}>Fire</button>
               </>
             }
-            <button onClick={() => handleAction(null)}>Cancel</button>
+            <button onClick={() => handleCancel()}>Cancel</button>
             <GameLog logs={logs} />
           </div>
         }
