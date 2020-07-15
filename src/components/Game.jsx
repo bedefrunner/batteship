@@ -25,16 +25,18 @@ export default function Game() {
       newGrid[i] = grid[i].slice();
     }
     const ship = ships.filter(s => s.id === shipId)[0];
+    ship.position.row = row;
+    ship.position.col = col;
+    ship.displayed = true;
     newGrid[row][col] = { status: "occupied", hover: false, hit: false, ship: ship };
     setGrid(newGrid);
-
-    updateDisplayedShips(shipId);
+    updateDisplayedShips(ship);
   }
 
-  const updateDisplayedShips = (shipId) => {
+  const updateDisplayedShips = (ship) => {
     let newShips = ships.slice();
-    const shipIndex = newShips.findIndex(s => s.id === shipId);
-    newShips[shipIndex].displayed = true;
+    const shipIndex = newShips.findIndex(s => s.id === ship.id);
+    newShips[shipIndex] = ship;
     setShips(newShips);
   }
 
@@ -47,14 +49,42 @@ export default function Game() {
     setGrid(generateGrid());
   }
 
+  const handleMove = (oldRow, oldCol, newRow, newCol) => {
+    let newGrid = [];
+    for (let i = 0; i < grid.length; i++) {
+      newGrid[i] = grid[i].slice();
+    }
+    const ship = {...selectedShip};
+    ship.position = { row: newRow, col: newCol };
+    newGrid[oldRow][oldCol] = { status: "empty", hover: false, hit: false, ship: null }
+    newGrid[newRow][newCol] = { status: "occupied", hover: false, hit: false, ship: ship };
+    setGrid(newGrid);
+    setSelectedShip(null);
+    setAction(null);
+    //setMyTurn(false);
+  }
+
   const onClickCell = (row, col) => {
-    if (!myTurn || !action) {
+    if (!myTurn || !action || !(0 < row < 11) || !(0 < col < 11)) {
       return null;
     }
     const cell = grid[row][col];
-    if (action === 'move' && !selectedShip) {
+  
+    // selecting ship
+    if (cell.ship && !selectedShip) {
       setSelectedShip(cell.ship);
     }
+    // move selected ship
+    else if (selectedShip && action === 'move' && cell.status === 'empty') {
+      const { row: currentRow, col: currentCol } = selectedShip.position;
+      const { moveRange } = selectedShip;
+      const okHorizontal = (Math.abs(row - currentRow) <= moveRange) && (currentCol === col);
+      const okVertical = (Math.abs(col - currentCol) <= moveRange) && (currentRow === row);
+      if (okHorizontal || okVertical) {
+        handleMove(currentRow, currentCol, row, col);
+      }
+    }
+
   }
 
   const renderGrid = () => {

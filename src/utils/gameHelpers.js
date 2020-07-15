@@ -34,16 +34,16 @@ export const generateGrid = () => {
 
 export const getNewShips = () => {
   return [
-    { id: "F1", positions: [], moveRange: 4, fireRange: 2, displayed: false },
-    { id: "F2", positions: [], moveRange: 4, fireRange: 2, displayed: false },
-    { id: "F3", positions: [], moveRange: 4, fireRange: 2, displayed: false },
-    { id: "F4", positions: [], moveRange: 4, fireRange: 2, displayed: false },
-    { id: "C1", positions: [], moveRange: 3, fireRange: 2, displayed: false },
-    { id: "C2", positions: [], moveRange: 3, fireRange: 2, displayed: false },
-    { id: "C3", positions: [], moveRange: 3, fireRange: 2, displayed: false },
-    { id: "D1", positions: [], moveRange: 2, fireRange: 3, displayed: false },
-    { id: "D2", positions: [], moveRange: 2, fireRange: 3, displayed: false },
-    { id: "P1", positions: [], moveRange: 1, fireRange: 5, displayed: false },
+    { id: "F1", position: { row: null, col: null }, moveRange: 4, fireRange: 2, displayed: false },
+    { id: "F2", position: { row: null, col: null }, moveRange: 4, fireRange: 2, displayed: false },
+    { id: "F3", position: { row: null, col: null }, moveRange: 4, fireRange: 2, displayed: false },
+    { id: "F4", position: { row: null, col: null }, moveRange: 4, fireRange: 2, displayed: false },
+    { id: "C1", position: { row: null, col: null }, moveRange: 3, fireRange: 2, displayed: false },
+    { id: "C2", position: { row: null, col: null }, moveRange: 3, fireRange: 2, displayed: false },
+    { id: "C3", position: { row: null, col: null }, moveRange: 3, fireRange: 2, displayed: false },
+    { id: "D1", position: { row: null, col: null }, moveRange: 2, fireRange: 3, displayed: false },
+    { id: "D2", position: { row: null, col: null }, moveRange: 2, fireRange: 3, displayed: false },
+    { id: "P1", position: { row: null, col: null }, moveRange: 1, fireRange: 5, displayed: false },
   ]
 }
 
