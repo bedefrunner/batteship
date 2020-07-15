@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { generateGrid, getNewShips, createPlayer } from '../utils/gameHelpers';
+import { generateGrid, getNewShips, dictionary, getNewGrid, destinationCellIsOk, getGridCoordinate } from '../utils/gameHelpers';
 import Grid from './Grid';
 import "../styles/Game.css";
-import ShipSelector from './shipSelector';
 import GameLog from './GameLog';
+import { startNewGame, newAction } from '../services/services';
 
 
 export default function Game() {
@@ -14,6 +14,96 @@ export default function Game() {
   const [ships, setShips] = useState(getNewShips());
   const [selectedShip, setSelectedShip] = useState();
   const [logs, setLogs] = useState({});
+  const [gameId, setGameId] = useState();
+  const [loadingNewGame, setLoadingNewGame] = useState(false);
+
+  const fetchNewGame = useCallback( async () => {
+    setLoadingNewGame(true);
+    const response = await startNewGame();
+    if (response && response.gameId) {
+      setGameId(response.gameId);
+    }
+    setLoadingNewGame(false);
+  });
+
+  const fetchNewMoveAction = async (shipId, direction, quantity) => {
+    setMyTurn(false);
+    const body = {
+      action: {
+        type: 'MOVE',
+        ship: shipId,
+        direction,
+        quantity
+      }
+    }
+    const response = await newAction(gameId, body);
+    handleOponentAction(response);
+    setMyTurn(true);
+  }
+
+  const fetchNewFireAction = async (shipId, targetRow, targetColumn) => {
+    setMyTurn(false);
+    const body = {
+      action: {
+        type: 'FIRE',
+        ship: shipId,
+        row: targetRow,
+        column: targetColumn,
+      }
+    }
+    const response = await newAction(gameId, body);
+    handleOponentAction(response);
+    setMyTurn(true);
+  }
+
+  useEffect(() => {
+    if (!gameId) {
+      fetchNewGame();
+    }
+  });
+
+  const handleOponentAction = (response) => {
+    console.log('OPONENTs RESPONSE', response);
+    const { type, ship, quantity, direction, row, column, events } = response.action;
+    // handle computer events
+    events.forEach(e => {
+      if (e.type === 'ALL_SHIPS_DESTROYED') {
+        const newLog = `[COMPUTER]: ALL_SHIPS_DESTROYED`;  // FINISH GAME!!!!
+        handleLog(newLog);
+      } else if (e.type === 'HIT_SHIP') {
+        const newLog = `[COMPUTER]: [HIT] Ship ${e.ship}`;
+        handleLog(newLog);
+      } else if (e.type === 'SHIP_DESTROYED') {
+        const newLog = `[COMPUTER]: [DESTROYED] Ship ${e.ship}`;
+        handleLog(newLog);
+      }
+    })
+    // computer moves
+    if (type === 'MOVE') {
+      const newLog = `[COMPUTER]: MOVE - ${ship} - ${direction} - ${quantity} `;
+      handleLog(newLog);      
+    } // computer fires 
+    else if (type === 'FIRE') {
+      const coordinate = getGridCoordinate(row, column);
+      const newLog = `[COMPUTER]: FIRE - ${ship} - ${coordinate}`;
+      handleLog(newLog);
+      // computer hits one of my ships
+      if (grid[row][column].ship) {
+        const ship = grid[row][column].ship;
+        let newLog = `[USER]: [HIT] Ship ${ship.id}`;
+        handleLog(newLog);
+        newLog = `[USER]: [DESTROYED] Ship ${ship.id}`;
+        handleLog(newLog);
+        handleHitShip(row, column);
+      }
+    }
+  }
+
+  const handleHitShip = (row, col) => {
+    const newGrid = getNewGrid(grid);
+    newGrid[row][col].status = 'sinked';
+    setGrid(newGrid);
+  }
 
   const onShipDrop = (row, col, shipId) => {
     if (grid[row][col].status === 'occupied') {
@@ -56,11 +146,9 @@ export default function Game() {
     setLogs(newLogs);
   }
 
-  const handleMove = (oldRow, oldCol, newRow, newCol) => {
-    let newGrid = [];
-    for (let i = 0; i < grid.length; i++) {
-      newGrid[i] = grid[i].slice();
-    }
+
+  const handleMove = async (oldRow, oldCol, newRow, newCol) => {
+    let newGrid = getNewGrid(grid);
     const ship = {...selectedShip};
     ship.position = { row: newRow, col: newCol };
     newGrid[oldRow][oldCol] = { status: "empty", hover: false, hit: false, ship: null }
@@ -68,13 +156,21 @@ export default function Game() {
     setGrid(newGrid);
     setSelectedShip(null);
     handleAction(null);
-    //setMyTurn(false);
     
-    let direction = 'NORTE';
-    if (newRow > oldRow) { direction = 'SUR'}
-    else if (oldCol < newCol) { direction = 'OESTE'}
-    else if (newCol < oldCol) { direction = 'ESTE'}
+    let direction = 'NORTH';
+    const quantity = Math.abs(newRow + newCol - oldRow - oldCol);
+    if (newRow > oldRow) { direction = 'SOUTH' }
+    else if (oldCol < newCol) { direction = 'WEST' }
+    else if (newCol < oldCol) { direction = 'EAST' }
     handleLog(`[USER]: MOVE - ${ship.id} - ${direction}`);
+
+    await fetchNewMoveAction(ship.id, direction, quantity);
+  }
+
+  const handleFire = async (targetRow, targetCol) => {
+    const coordinate = getGridCoordinate(targetRow, targetCol);
+    handleLog(coordinate);
+    await fetchNewFireAction(selectedShip.id, targetRow, targetCol);
   }
 
   const onClickCell = (row, col) => {
@@ -91,10 +187,16 @@ export default function Game() {
     else if (selectedShip && action === 'move' && cell.status === 'empty') {
       const { row: currentRow, col: currentCol } = selectedShip.position;
       const { moveRange } = selectedShip;
-      const okHorizontal = (Math.abs(row - currentRow) <= moveRange) && (currentCol === col);
-      const okVertical = (Math.abs(col - currentCol) <= moveRange) && (currentRow === row);
-      if (okHorizontal || okVertical) {
+      if (destinationCellIsOk(moveRange, currentRow, currentCol, row, col)) {
         handleMove(currentRow, currentCol, row, col);
+      }
+    }
+    // selected ship fires
+    else if (selectedShip && action === 'fire') {
+      const { row: currentRow, col: currentCol } = selectedShip.position;
+      const { fireRange } = selectedShip;
+      if (destinationCellIsOk(fireRange, currentRow, currentCol, row, col)) {
+        handleFire(row, col);
       }
     }
 
@@ -132,9 +234,20 @@ export default function Game() {
         ship.displayed ?
         <button className="normal-button" disabled>{ship.id}</button>
         :
-        <button draggable onDragStart={dragStart}>{ship.id}</button>
+        <button className="normal-button" draggable onDragStart={dragStart}>{ship.id}</button>
       )
     })
+  }
+
+  if (loadingNewGame) {
+    return (
+      <div className="game">
+        <div className="title-container">
+          <h1 className="title">IIC2513 Battleship</h1>
+          <p>Loading new game...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -146,6 +259,7 @@ export default function Game() {
         <div>{renderGrid()}</div>
         {!gameStarted && 
           <div className="select-option-container">
+            <p>Drag and drop your ships to the board</p>
             {renderShips()}
             <button className="reset-button" onClick={() => handleReset()}>Reset</button>
             {allShipsDisplayed() && 
@@ -155,6 +269,8 @@ export default function Game() {
         }
         {gameStarted &&
           <div className="select-option-container">
+            {myTurn && <p>Your turn!</p>}
+            {!myTurn && <p>Waiting for you opponent to move...</p>}
             {action === 'move' && 
               <> 
               <button className="button-active">Move</button>

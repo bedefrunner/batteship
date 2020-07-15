@@ -7,8 +7,8 @@
 }
 
 .title-container {
-  display: flex;
-  justify-content: center;
+  display: block;
+  margin: auto;
   padding-bottom: 10px;
   border-bottom: 2px solid rgb(205, 205, 205);
 }
@@ -23,6 +23,7 @@ button {
 
 .select-option-container {
   margin-top: 100px;
+
 }
 
 button {
@@ -40,14 +41,14 @@ button {
 }
 
 .reset-button {
-  width: 100%;
+  width: 50%;
   height: 30px;
   margin: 10px auto;
   background-color: red;
 }
 
 .play-button {
-  width: 50px;
+  width: 50%;
   height: 30px;
   margin: 10px auto;
   background-color: greenyellow;
@@ -57,4 +58,8 @@ button {
   width: 100px;
   height: 30px;
   margin: 10px auto;
+}
+
+.normal-button {
+  width: 50px;
 }

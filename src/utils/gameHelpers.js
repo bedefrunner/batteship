@@ -1,4 +1,4 @@
-const dictionary = {
+export const dictionary = {
   0: null,
   1: "A",
   2: "B",
@@ -23,7 +23,7 @@ export const generateGrid = () => {
       } else if (i !== 0 && j === 0) {
         row.push({ status: "label", label: i });
       } else {
-        row.push({ status: "empty", hover: false, hit: false, ship: null });        
+        row.push({ status: "sinked", hover: false, ship: null });        
       }
     }
     grid.push(row);
@@ -43,7 +43,24 @@ export const getNewShips = () => {
     { id: "C3", position: { row: null, col: null }, moveRange: 3, fireRange: 2, displayed: false },
     { id: "D1", position: { row: null, col: null }, moveRange: 2, fireRange: 3, displayed: false },
     { id: "D2", position: { row: null, col: null }, moveRange: 2, fireRange: 3, displayed: false },
-    { id: "P1", position: { row: null, col: null }, moveRange: 1, fireRange: 5, displayed: false },
+    { id: "AC1", position: { row: null, col: null }, moveRange: 1, fireRange: 5, displayed: false },
   ]
 }
 
+export const getNewGrid = (grid) => {
+  let newGrid = [];
+  for (let i = 0; i < grid.length; i++) {
+    newGrid[i] = grid[i].slice();
+  }
+  return newGrid;
+}
+
+export const destinationCellIsOk = (range, currentRow, currentCol, targetRow, targetCol) => {
+  const okHorizontal = (Math.abs(currentRow - targetRow) <= range) && (currentCol === targetCol);
+  const okVertical = (Math.abs(currentCol - targetCol) <= range) && (currentRow === targetRow);
+  return okHorizontal || okVertical;
+}
+
+export const getGridCoordinate = (row, col) => {
+  return `${dictionary[col + 1]}${row + 1}`;
+}
