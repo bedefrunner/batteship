@@ -3,15 +3,17 @@ import { generateGrid, getNewShips, createPlayer } from '../utils/gameHelpers';
 import Grid from './Grid';
 import "../styles/Game.css";
 import ShipSelector from './shipSelector';
+import GameLog from './GameLog';
 
 
 export default function Game() {
   const [myTurn, setMyTurn] = useState(true);
   const [gameStarted, setGameStarted] = useState(false);
-  const [action, setAction] = useState('fire');
+  const [action, setAction] = useState(null);
   const [grid, setGrid] = useState(generateGrid());
   const [ships, setShips] = useState(getNewShips());
   const [selectedShip, setSelectedShip] = useState();
+  const [logs, setLogs] = useState(['hola', 'chao', 'que', 'te', 'vaya', 'super', 'bien', 'querido', 'amigo']);
 
   const updateGrid = (row, col) => {
   }
@@ -156,6 +158,7 @@ export default function Game() {
               </>
             }
             <button onClick={() => handleAction(null)}>Cancel</button>
+            <GameLog logs={logs} />
           </div>
         }
       </div>

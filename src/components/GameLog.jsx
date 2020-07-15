@@ -2,38 +2,14 @@ import React from "react";
 
 import "../styles/GameLog.css";
 
-const GameLog = props => {
-
-  const renderTurn = () => {
-    if (!props.allShipsSet) {
-      return "Pre-game";
-    } else if (props.gameStarting) {
-      return "Game starting...";
-    } else if (props.gameOver) {
-      return `${props.winner} wins!!`;
-    }
-    return `${props.activePlayer}'s turn`;
-  };
-
+const GameLog = ({ logs }) => {
   return (
-    <div className="game-log">
-      <p className="player-turn">{renderTurn()}</p>
-      <div className="gamelog-container">
-        {props.logs.map((log, i) => {
-          return (
-            <div key={i} className="turn-block">
-              {log.turn}
-              {log.messages.map((msg, j) => {
-                return (
-                  <p className="log" key={j}>
-                    {msg}
-                  </p>
-                );
-              })}
-            </div>
-          );
-        })}
-      </div>
+    <div className="gamelog-container">
+      {logs.map((log, i) => {
+        return (
+          <p> {log} </p>
+        );
+      })}
     </div>
   );
 };
