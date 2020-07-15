@@ -23,7 +23,6 @@ export default function Game() {
     setLoadingNewGame(true);
     const response = await startNewGame();
     if (response && response.gameId) {
-      console.log('GAME ID:' , response.gameId);
       setGameId(response.gameId);
     }
     setLoadingNewGame(false);
@@ -62,6 +61,7 @@ export default function Game() {
   }
 
   useEffect(() => {
+    console.log('GAME ID:', gameId);
     if (!gameId) {
       fetchNewGame();
     }
@@ -87,6 +87,7 @@ export default function Game() {
   }
 
   const handleOponentAction = (response) => {
+    console.log('Response:', response);
     const { type, ship } = response.action;
     const { events } = response;
     let newLogs = [];
@@ -111,11 +112,11 @@ export default function Game() {
       const coordinate = getGridCoordinate(row + 1, column + 1);
       newLogs.push(`[COMPUTER]: FIRE - ${ship} - ${coordinate}`);
       // computer hits one of my ships
-      if (grid[row][column].ship) {
-        const ship = grid[row][column].ship;
+      if (grid[row + 1][column + 1].ship) {
+        const ship = grid[row + 1][column + 1].ship;
         newLogs.push(`[USER]: [HIT] Ship ${ship.id}`);
         newLogs.push(`[USER]: [DESTROYED] Ship ${ship.id}`);
-        handleHitShip(row, column, newLogs);
+        handleHitShip(row + 1, column + 1, newLogs);
       }
     }
     handleLog(newLogs);
@@ -286,7 +287,7 @@ export default function Game() {
           <h1 className="title">IIC2513 Battleship</h1>
           {winner === 'player' && <h2>You win!</h2>}
           {winner === 'computer' && <h2>Game over :(</h2>}
-          <button class="play-button" onClick={() => handleNewGame()}>New game</button>
+          <button class="new-game-button" onClick={() => handleNewGame()}>New game</button>
         </div>
       </div>
     );
