@@ -126,13 +126,12 @@ export default function Game() {
     const newGrid = getNewGrid(grid);
     newGrid[row][col].status = 'sunk';
     setGrid(newGrid);
-    sunkShips += 1;
-    setSunkShips(sunkShips + 1);
-    if (sunkShips === 10) {
+    if (sunkShips + 1 === 10) {
       newLogs.push('[USER]: ALL_SHIPS_DESTROYED');
       handleLog(newLogs);
       handleWinner('computer');
     }
+    setSunkShips(sunkShips + 1);
   }
 
   const onShipDrop = (row, col, shipId) => {
@@ -287,7 +286,7 @@ export default function Game() {
           <h1 className="title">IIC2513 Battleship</h1>
           {winner === 'player' && <h2>You win!</h2>}
           {winner === 'computer' && <h2>Game over :(</h2>}
-          <button class="new-game-button" onClick={() => handleNewGame()}>New game</button>
+          <button className="new-game-button" onClick={() => handleNewGame()}>New game</button>
         </div>
       </div>
     );
