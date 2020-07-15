@@ -26,10 +26,23 @@ export default function Game() {
     newGrid[row][col] = { status: "occupied", hover: false, hit: false, type: shipType };
     setGrid(newGrid);
 
+    updateDisplayedShips(shipType);
+  }
+
+  const updateDisplayedShips = (shipType) => {
     let newShips = ships.slice();
     const shipIndex = newShips.findIndex(s => s.type === shipType);
     newShips[shipIndex].displayed = true;
     setShips(newShips);
+  }
+
+  const allShipsDisplayed = () => {
+    return ships.every(ship => ship.displayed);
+  }
+
+  const handleReset = () => {
+    setShips(getNewShips());
+    setGrid(generateGrid());
   }
 
   const renderGrid = () => {
@@ -44,7 +57,6 @@ export default function Game() {
     );
   }
 
-
   const renderShips = () => {
     return ships.map(ship => {
       const dragStart = (e) => {
@@ -52,9 +64,9 @@ export default function Game() {
       }
       return(
         ship.displayed ?
-        <button className="ships-selector-button" disabled>{ship.type}</button>
+        <button className="ship-selector-button" disabled>{ship.type}</button>
         :
-        <button draggable onDragStart={dragStart} className="ships-selector-button">{ship.type}</button>
+        <button draggable onDragStart={dragStart} className="ship-selector-button">{ship.type}</button>
       )
     })
   }
@@ -66,9 +78,15 @@ export default function Game() {
       </div>
       <div className="shipgrid-container">
         <div>{renderGrid()}</div>
-        <div className="select-ships-container">
-          {renderShips()}
-        </div>
+        {!gameStarted && 
+          <div className="select-ships-container">
+            {renderShips()}
+            <button className="reset-button" onClick={() => handleReset()}>Reset</button>
+            {allShipsDisplayed() && 
+              <button className="play-button">Play</button>
+            }
+          </div>
+        }
       </div>
     </div>
   );

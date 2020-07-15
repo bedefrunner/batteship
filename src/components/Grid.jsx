@@ -6,22 +6,6 @@ import "../styles/Grid.css";
 
 export default function Grid({ grid, myTurn, gameStarted, onShipDrop }) {
 
-  const handleHover = (row, col, type) => {
-    // const { grid, ships, currentShip } = this.props;
-    // const { rotated } = this.state;
-    // const data = {
-    //   grid: grid.slice(),
-    //   rotated,
-    //   row,
-    //   col,
-    //   type,
-    //   ships,
-    //   currentShip
-    // };
-    // const updatedGrid = hoverUpdate(data);
-    // this.props.updateGrids(this.props.player, updatedGrid, "shipsGrid");
-  }
-
   const handleClick = (row, col) => {
     // const data = {
     //   grid: grid.slice(),
@@ -50,7 +34,6 @@ export default function Grid({ grid, myTurn, gameStarted, onShipDrop }) {
             j={j}
             gameStarted={gameStarted}
             cell={cell}
-            handleHover={handleHover}
             handleClick={handleClick}
             onShipDrop={onShipDrop}
           />

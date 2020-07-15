@@ -37,7 +37,7 @@ export const getNewShips = () => {
     { type: "F1", positions: [], moveRange: 4, fireRange: 2, displayed: false },
     { type: "F2", positions: [], moveRange: 4, fireRange: 2, displayed: false },
     { type: "F3", positions: [], moveRange: 4, fireRange: 2, displayed: false },
-    { type: "F1", positions: [], moveRange: 4, fireRange: 2, displayed: false },
+    { type: "F4", positions: [], moveRange: 4, fireRange: 2, displayed: false },
     { type: "C1", positions: [], moveRange: 3, fireRange: 2, displayed: false },
     { type: "C2", positions: [], moveRange: 3, fireRange: 2, displayed: false },
     { type: "C3", positions: [], moveRange: 3, fireRange: 2, displayed: false },

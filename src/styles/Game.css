@@ -24,3 +24,22 @@ button {
 .select-ships-container {
   margin-top: 100px;
 }
+
+.ship-selector-button {
+  width: 50px;
+  margin: 10px auto;
+}
+
+.reset-button {
+  width: 50px;
+  height: 30px;
+  margin: 10px auto;
+  background-color: red;
+}
+
+.play-button {
+  width: 50px;
+  height: 30px;
+  margin: 10px auto;
+  background-color: greenyellow;
+}

@@ -9,7 +9,6 @@ const Cell = ({ cell, i, j, handleHover, handleClick, gameStarted, onShipDrop })
     return (
       <div
         className={updateCellClass(cell)}
-        onMouseLeave={() => handleHover(i, j, "leave")}
       />
     );
   }
@@ -27,8 +26,6 @@ const Cell = ({ cell, i, j, handleHover, handleClick, gameStarted, onShipDrop })
       onDrop={dropIt}
       onDragOver={dragOver}
       className={updateCellClass(cell)}
-      onMouseEnter={() => handleHover(i, j, "enter")}
-      onMouseLeave={() => handleHover(i, j, "leave")}
       onClick={() => handleClick(i, j)}
     >
       <p>{cell.type}</p>
