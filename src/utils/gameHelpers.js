@@ -14,31 +14,16 @@ const dictionary = {
 
 const makeShips = () => {
   return [
-    {
-      type: 'Carrier',
-      size: 5,
-      positions: []
-    },
-    {
-      type: "Battleship",
-      size: 4,
-      positions: []
-    },
-    {
-      type: "Cruiser",
-      size: 3,
-      positions: []
-    },
-    {
-      type: "Submarine",
-      size: 3,
-      positions: []
-    },
-    {
-      type: "Destroyer",
-      size: 2,
-      positions: []
-    }
+    { type: "F1", positions: [], moveRange: 4, fireRange: 2, disabled: false },
+    { type: "F2", positions: [], moveRange: 4, fireRange: 2, disabled: false },
+    { type: "F3", positions: [], moveRange: 4, fireRange: 2, disabled: false },
+    { type: "F4", positions: [], moveRange: 4, fireRange: 2, disabled: false },
+    { type: "C1", positions: [], moveRange: 3, fireRange: 2, disabled: false },
+    { type: "C2", positions: [], moveRange: 3, fireRange: 2, disabled: false },
+    { type: "C3", positions: [], moveRange: 3, fireRange: 2, disabled: false },
+    { type: "D1", positions: [], moveRange: 2, fireRange: 3, disabled: false },
+    { type: "D2", positions: [], moveRange: 2, fireRange: 3, disabled: false },
+    { type: "P1", positions: [], moveRange: 1, fireRange: 5, disabled: false },
   ];
 }
 
@@ -66,7 +51,6 @@ const createPlayer = () => {
     shipsGrid: gridGenerator(),
     movesGrid: gridGenerator(),
     ships: makeShips(),
-    currentShip: 0,
     shipsSet: false,
     sunkenShips: 0
   }

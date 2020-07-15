@@ -35,10 +35,11 @@ export default class Game extends Component {
       updatedShips, 
       player
     }
-    if (currentShip + 1 === ships.length && player === "player2") {
+    const displayedShips = ships.filter(ship => ship.disabled);
+    if (displayedShips.length === ships.length && player === "player2") {
       this.shipReducer("SET_PLAYER_TWO", payload); 
       this.shipReducer("START_GAME", payload);
-    } else if (currentShip + 1 === ships.length && player === "player1") {
+    } else if (displayedShips.length === ships.length && player === "player1") {
       this.shipReducer("SET_PLAYER_ONE", payload); 
     } else {
       this.shipReducer("SET_SHIP", payload)
