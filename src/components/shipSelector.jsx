@@ -8,9 +8,9 @@ export default function ShipSelector({ ship, handleShipSelect }) {
 
   return (
     ship.displayed ?
-    <button type="button" className="ships-selector-button" disabled>{ship.type}</button>
+    <button type="button" className="ships-selector-button" disabled>{ship.id}</button>
     :
-    <button type="button" className="ships-selector-button" onClick={() => handleShipSelect(ship)}>{ship.type}</button>
+    <button type="button" className="ships-selector-button" onClick={() => handleShipSelect(ship)}>{ship.id}</button>
   );
 
 }

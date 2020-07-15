@@ -1,15 +1,15 @@
 import React from "react";
 import { updateCellClass } from "../utils/gridHelpers";
 
-const Cell = ({ cell, i, j, handleHover, handleClick, gameStarted, onShipDrop }) => {
+const Cell = ({ cell, i, j, onClickCell, onShipDrop }) => {
   if (cell.status === "label") {
     return <div className="grid-square label">{cell.label}</div>;
   }
   const dropIt = (e) => {
     e.stopPropagation();
     e.preventDefault();
-    const shipType = e.dataTransfer.getData('draggableInfo');
-    onShipDrop(i, j, shipType);
+    const shipId = e.dataTransfer.getData('draggableInfo');
+    onShipDrop(i, j, shipId);
   }
   const dragOver = (e) => {
     e.preventDefault();
@@ -19,9 +19,9 @@ const Cell = ({ cell, i, j, handleHover, handleClick, gameStarted, onShipDrop })
       onDrop={dropIt}
       onDragOver={dragOver}
       className={updateCellClass(cell)}
-      onClick={() => handleClick(i, j)}
+      onClick={() => onClickCell(i, j)}
     >
-      <p>{cell.type}</p>
+      <p>{cell.ship ? cell.ship.id : null}</p>
     </div>
   );
 };

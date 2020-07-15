@@ -23,7 +23,7 @@ export const generateGrid = () => {
       } else if (i !== 0 && j === 0) {
         row.push({ status: "label", label: i });
       } else {
-        row.push({ status: "empty", hover: false, hit: false, type: null });        
+        row.push({ status: "empty", hover: false, hit: false, ship: null });        
       }
     }
     grid.push(row);
@@ -34,16 +34,16 @@ export const generateGrid = () => {
 
 export const getNewShips = () => {
   return [
-    { type: "F1", positions: [], moveRange: 4, fireRange: 2, displayed: false },
-    { type: "F2", positions: [], moveRange: 4, fireRange: 2, displayed: false },
-    { type: "F3", positions: [], moveRange: 4, fireRange: 2, displayed: false },
-    { type: "F4", positions: [], moveRange: 4, fireRange: 2, displayed: false },
-    { type: "C1", positions: [], moveRange: 3, fireRange: 2, displayed: false },
-    { type: "C2", positions: [], moveRange: 3, fireRange: 2, displayed: false },
-    { type: "C3", positions: [], moveRange: 3, fireRange: 2, displayed: false },
-    { type: "D1", positions: [], moveRange: 2, fireRange: 3, displayed: false },
-    { type: "D2", positions: [], moveRange: 2, fireRange: 3, displayed: false },
-    { type: "P1", positions: [], moveRange: 1, fireRange: 5, displayed: false },
+    { id: "F1", positions: [], moveRange: 4, fireRange: 2, displayed: false },
+    { id: "F2", positions: [], moveRange: 4, fireRange: 2, displayed: false },
+    { id: "F3", positions: [], moveRange: 4, fireRange: 2, displayed: false },
+    { id: "F4", positions: [], moveRange: 4, fireRange: 2, displayed: false },
+    { id: "C1", positions: [], moveRange: 3, fireRange: 2, displayed: false },
+    { id: "C2", positions: [], moveRange: 3, fireRange: 2, displayed: false },
+    { id: "C3", positions: [], moveRange: 3, fireRange: 2, displayed: false },
+    { id: "D1", positions: [], moveRange: 2, fireRange: 3, displayed: false },
+    { id: "D2", positions: [], moveRange: 2, fireRange: 3, displayed: false },
+    { id: "P1", positions: [], moveRange: 1, fireRange: 5, displayed: false },
   ]
 }
 
