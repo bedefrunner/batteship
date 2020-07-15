@@ -8,7 +8,7 @@ import ShipSelector from './shipSelector';
 export default function Game() {
   const [myTurn, setMyTurn] = useState(true);
   const [gameStarted, setGameStarted] = useState(false);
-  const [action, setAction] = useState();
+  const [action, setAction] = useState('fire');
   const [grid, setGrid] = useState(generateGrid());
   const [ships, setShips] = useState(getNewShips());
   const [selectedShip, setSelectedShip] = useState();
@@ -137,8 +137,25 @@ export default function Game() {
         }
         {gameStarted &&
           <div className="select-option-container">
-            <button onClick={() => handleAction('move')}>Move</button>
-            <button onClick={() => handleAction('fire')}>Fire</button>
+            {action === 'move' && 
+              <> 
+              <button className="button-active">Move</button>
+              <button onClick={() => handleAction('fire')}>Fire</button>
+              </>
+            }
+            { action === 'fire' &&
+              <>
+              <button onClick={() => handleAction('move')}>Move</button>
+              <button  className="button-active">Fire</button>
+              </>
+            }
+            { action === null &&
+              <>
+              <button onClick={() => handleAction('move')}>Move</button>
+              <button onClick={() => handleAction('fire')}>Fire</button>
+              </>
+            }
+            <button onClick={() => handleAction(null)}>Cancel</button>
           </div>
         }
       </div>
