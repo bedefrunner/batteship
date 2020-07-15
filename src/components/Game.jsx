@@ -25,7 +25,6 @@ export default function Game() {
       newGrid[i] = grid[i].slice();
     }
     const ship = ships.filter(s => s.id === shipId)[0];
-    console.log(ship);
     newGrid[row][col] = { status: "occupied", hover: false, hit: false, ship: ship };
     setGrid(newGrid);
 
@@ -54,7 +53,7 @@ export default function Game() {
     }
     const cell = grid[row][col];
     if (action === 'move' && !selectedShip) {
-      setSelectedShip()
+      setSelectedShip(cell.ship);
     }
   }
 

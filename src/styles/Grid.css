@@ -53,13 +53,16 @@
 
 
 /* === Grid coloring classes === */
+.water {
+  background-color: lightblue;
+}
 
 .active {
-  background-color: rgb(185, 185, 185);
+  background-color: lightgray;
 }
 
 .occupied {
-  background-color: white;
+  background-color: rgb(185, 185, 185);
 }
 
 .active-occupied {

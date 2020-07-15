@@ -10,6 +10,8 @@ const updateCellClass = cell => {
     classes += "hit";
   } else if (cell.status === "sunk") {
     classes += "sunk";
+  } else {
+    classes += "water";
   }
   return classes;
 };
