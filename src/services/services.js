@@ -21,6 +21,5 @@ export async function newAction(gameId, body) {
     },
     body: JSON.stringify(body),
   });
-  console.log('holaaaaaaa', response);
   return response.json();
 };

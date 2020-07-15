@@ -16,11 +16,14 @@ export default function Game() {
   const [logs, setLogs] = useState({});
   const [gameId, setGameId] = useState();
   const [loadingNewGame, setLoadingNewGame] = useState(false);
+  const [winner, setWinner] = useState();
+  const [sunkShips, setSunkShips] = useState(0);
 
   const fetchNewGame = useCallback( async () => {
     setLoadingNewGame(true);
     const response = await startNewGame();
     if (response && response.gameId) {
+      console.log('GAME ID:' , response.gameId);
       setGameId(response.gameId);
     }
     setLoadingNewGame(false);
@@ -39,6 +42,7 @@ export default function Game() {
     const response = await newAction(gameId, body);
     handleOponentAction(response);
     setMyTurn(true);
+    handleCancel();
   }
 
   const fetchNewFireAction = async (shipId, targetRow, targetColumn) => {
@@ -47,13 +51,14 @@ export default function Game() {
       action: {
         type: 'FIRE',
         ship: shipId,
-        row: targetRow,
-        column: targetColumn,
+        row: targetRow - 1,
+        column: targetColumn - 1,
       }
     }
     const response = await newAction(gameId, body);
     handleOponentAction(response);
     setMyTurn(true);
+    handleCancel();
   }
 
   useEffect(() => {
@@ -62,47 +67,71 @@ export default function Game() {
     }
   });
 
+  const handleWinner = (winner) => {
+    setWinner(winner);
+  }
+  
+  const handleNewGame = () => {
+    setMyTurn(true);
+    setGameStarted(false);
+    setAction(null);
+    setGrid(generateGrid());
+    setShips(getNewShips());
+    setSelectedShip(null);
+    setLogs({});
+    setGameId(null);
+    setLoadingNewGame(false);
+    setWinner(null);
+    setSunkShips(0);
+    fetchNewGame();
+  }
+
   const handleOponentAction = (response) => {
-    console.log('OPONENTs RESPONSE', response);
-    const { type, ship, quantity, direction, row, column, events } = response.action;
+    const { type, ship } = response.action;
+    const { events } = response;
+    let newLogs = [];
     // handle computer events
-    events.forEach(e => {
+    events && events.forEach(e => {
       if (e.type === 'ALL_SHIPS_DESTROYED') {
-        const newLog = `[COMPUTER]: ALL_SHIPS_DESTROYED`;  // FINISH GAME!!!!
-        handleLog(newLog);
+        newLogs.push(`[COMPUTER]: ALL_SHIPS_DESTROYED`);
+        handleWinner('player');
       } else if (e.type === 'HIT_SHIP') {
-        const newLog = `[COMPUTER]: [HIT] Ship ${e.ship}`;
-        handleLog(newLog);
+        newLogs.push(`[COMPUTER]: [HIT] Ship ${e.ship}`);
       } else if (e.type === 'SHIP_DESTROYED') {
-        const newLog = `[COMPUTER]: [DESTROYED] Ship ${e.ship}`;
-        handleLog(newLog);
+        newLogs.push(`[COMPUTER]: [DESTROYED] Ship ${e.ship}`);
       }
-    })
+    });
     // computer moves
     if (type === 'MOVE') {
-      const newLog = `[COMPUTER]: MOVE - ${ship} - ${direction} - ${quantity} `;
-      handleLog(newLog);      
+      const { direction, quantity } = response.action;
+      newLogs.push(`[COMPUTER]: MOVE - ${ship} - ${direction} - ${quantity}`);    
     } // computer fires 
     else if (type === 'FIRE') {
-      const coordinate = getGridCoordinate(row, column);
-      const newLog = `[COMPUTER]: FIRE - ${ship} - ${coordinate}`;
-      handleLog(newLog);
+      const { row, column } = response.action;
+      const coordinate = getGridCoordinate(row + 1, column + 1);
+      newLogs.push(`[COMPUTER]: FIRE - ${ship} - ${coordinate}`);
       // computer hits one of my ships
       if (grid[row][column].ship) {
         const ship = grid[row][column].ship;
-        let newLog = `[USER]: [HIT] Ship ${ship.id}`;
-        handleLog(newLog);
-        newLog = `[USER]: [DESTROYED] Ship ${ship.id}`;
-        handleLog(newLog);
-        handleHitShip(row, column);
+        newLogs.push(`[USER]: [HIT] Ship ${ship.id}`);
+        newLogs.push(`[USER]: [DESTROYED] Ship ${ship.id}`);
+        handleHitShip(row, column, newLogs);
       }
     }
+    handleLog(newLogs);
   }
 
-  const handleHitShip = (row, col) => {
+  const handleHitShip = (row, col, newLogs) => {
     const newGrid = getNewGrid(grid);
-    newGrid[row][col].status = 'sinked';
+    newGrid[row][col].status = 'sunk';
     setGrid(newGrid);
+    sunkShips += 1;
+    setSunkShips(sunkShips + 1);
+    if (sunkShips === 10) {
+      newLogs.push('[USER]: ALL_SHIPS_DESTROYED');
+      handleLog(newLogs);
+      handleWinner('computer');
+    }
   }
 
   const onShipDrop = (row, col, shipId) => {
@@ -138,14 +167,14 @@ export default function Game() {
     setGrid(generateGrid());
   }
 
-  const handleLog = (message) => {
-    let newLogs = {...logs}
-    const size = Object.keys(newLogs).length;
-    newLogs[size] = message;
-    console.log(newLogs);
-    setLogs(newLogs);
+  const handleLog = (messages) => {
+    let size = Object.keys(logs).length;
+    messages.forEach(message => {
+      logs[size] = message;
+      size += 1;
+    });
+    setLogs(logs);
   }
-
 
   const handleMove = async (oldRow, oldCol, newRow, newCol) => {
     let newGrid = getNewGrid(grid);
@@ -162,14 +191,14 @@ export default function Game() {
     if (newRow > oldRow) { direction = 'SOUTH' }
     else if (oldCol < newCol) { direction = 'WEST' }
     else if (newCol < oldCol) { direction = 'EAST' }
-    handleLog(`[USER]: MOVE - ${ship.id} - ${direction}`);
+    handleLog([`[USER]: MOVE - ${ship.id} - ${direction} - ${quantity}`]);
 
     await fetchNewMoveAction(ship.id, direction, quantity);
   }
 
   const handleFire = async (targetRow, targetCol) => {
     const coordinate = getGridCoordinate(targetRow, targetCol);
-    handleLog(coordinate);
+    handleLog([`[USER]: FIRE - ${selectedShip.id} - ${coordinate}`]);
     await fetchNewFireAction(selectedShip.id, targetRow, targetCol);
   }
 
@@ -247,7 +276,20 @@ export default function Game() {
           <p>Loading new game...</p>
         </div>
       </div>
-    )
+    );
+  }
+
+  if (winner) {
+    return (
+      <div className="game">
+        <div className="title-container">
+          <h1 className="title">IIC2513 Battleship</h1>
+          {winner === 'player' && <h2>You win!</h2>}
+          {winner === 'computer' && <h2>Game over :(</h2>}
+          <button class="play-button" onClick={() => handleNewGame()}>New game</button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -259,17 +301,21 @@ export default function Game() {
         <div>{renderGrid()}</div>
         {!gameStarted && 
           <div className="select-option-container">
-            <p>Drag and drop your ships to the board</p>
+            <p>Before start, drag and drop your ships to the board</p>
             {renderShips()}
             <button className="reset-button" onClick={() => handleReset()}>Reset</button>
+            {!allShipsDisplayed() && 
+              <button className="play-button" disabled>Play</button>
+            }
             {allShipsDisplayed() && 
               <button className="play-button" onClick={() => handlePlay()}>Play</button>
             }
           </div>
         }
         {gameStarted &&
+          <>
           <div className="select-option-container">
-            {myTurn && <p>Your turn!</p>}
+            {myTurn && <p>Your turn! Select an action:</p>}
             {!myTurn && <p>Waiting for you opponent to move...</p>}
             {action === 'move' && 
               <> 
@@ -292,6 +338,8 @@ export default function Game() {
             <button onClick={() => handleCancel()}>Cancel</button>
             <GameLog logs={logs} />
           </div>
+          <button className="button-surrender" onClick={() => handleWinner('computer')}>Surrender</button>
+          </>
         }
       </div>
     </div>

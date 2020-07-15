@@ -1,5 +1,5 @@
 import React from "react";
-import { updateCellClass } from "../utils/gridHelpers";
+import { updateCellClass } from "../utils/gameHelpers";
 
 const Cell = ({ cell, i, j, onClickCell, onShipDrop }) => {
   if (cell.status === "label") {

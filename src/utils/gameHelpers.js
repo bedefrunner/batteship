@@ -23,7 +23,7 @@ export const generateGrid = () => {
       } else if (i !== 0 && j === 0) {
         row.push({ status: "label", label: i });
       } else {
-        row.push({ status: "sinked", hover: false, ship: null });        
+        row.push({ status: "empty", hover: false, ship: null });        
       }
     }
     grid.push(row);
@@ -62,5 +62,24 @@ export const destinationCellIsOk = (range, currentRow, currentCol, targetRow, ta
 }
 
 export const getGridCoordinate = (row, col) => {
-  return `${dictionary[col + 1]}${row + 1}`;
+  return `${dictionary[col]}${row}`;
 }
+
+export const updateCellClass = cell => {
+  let classes = "grid-square ";
+  if (cell.status === "occupied" && cell.hover) {
+    classes += "active-occupied";
+  } else if (cell.hover) {
+    classes += "active";
+  } else if (cell.status === "occupied") {
+    classes += "occupied";
+  } else if (cell.status === "hit") {
+    classes += "hit";
+  } else if (cell.status === "sunk") {
+    classes += "sunk";
+  } else {
+    classes += "water";
+  }
+  return classes;
+};
+
