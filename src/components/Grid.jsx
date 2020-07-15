@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import "../styles/Grid.css";
 
 
-export default function Grid({ grid, myTurn, gameStarted }) {
+export default function Grid({ grid, myTurn, gameStarted, onShipDrop }) {
 
   const handleHover = (row, col, type) => {
     // const { grid, ships, currentShip } = this.props;
@@ -52,6 +52,7 @@ export default function Grid({ grid, myTurn, gameStarted }) {
             cell={cell}
             handleHover={handleHover}
             handleClick={handleClick}
+            onShipDrop={onShipDrop}
           />
         );
       });
@@ -64,8 +65,4 @@ export default function Grid({ grid, myTurn, gameStarted }) {
       <button onClick={handleReset}>Reset</button>
     </div>
   );
-}
-
-Grid.protoTypes = {
-  grid: PropTypes.array.isRequired,
 }

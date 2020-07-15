@@ -31,18 +31,37 @@ export const generateGrid = () => {
   return grid;
 };
 
+export const generateGrid2 = () => {
+  let grid = {}
+  for (let i = 0; i <= 10; i++) {
+    for (let j = 0; j <= 10; j++) {
+      if (i === 0) {
+        const cellId = dictionary[j]
+        grid[cellId] = { status: "label", label: dictionary[j] };
+      } else if (i !== 0 && j === 0) {
+        const cellId = `${i}`;
+        grid[cellId] = { status: "label", label: i };
+      } else {
+        const cellId = `${dictionary[j]}${i}`;
+        grid[cellId] = { id: cellId, status: "empty", hover: false, hit: false, type: null, i: i, j: j };        
+      }
+    }
+  }
+  return grid;
+}
+
 const makeShips = () => {
   return [
-    { type: "F1", positions: [], moveRange: 4, fireRange: 2, disabled: false },
-    { type: "F2", positions: [], moveRange: 4, fireRange: 2, disabled: false },
-    { type: "F3", positions: [], moveRange: 4, fireRange: 2, disabled: false },
-    { type: "F4", positions: [], moveRange: 4, fireRange: 2, disabled: false },
-    { type: "C1", positions: [], moveRange: 3, fireRange: 2, disabled: false },
-    { type: "C2", positions: [], moveRange: 3, fireRange: 2, disabled: false },
-    { type: "C3", positions: [], moveRange: 3, fireRange: 2, disabled: false },
-    { type: "D1", positions: [], moveRange: 2, fireRange: 3, disabled: false },
-    { type: "D2", positions: [], moveRange: 2, fireRange: 3, disabled: false },
-    { type: "P1", positions: [], moveRange: 1, fireRange: 5, disabled: false },
+    { type: "F1", positions: [], moveRange: 4, fireRange: 2, displayed: false },
+    { type: "F2", positions: [], moveRange: 4, fireRange: 2, displayed: false },
+    { type: "F3", positions: [], moveRange: 4, fireRange: 2, displayed: false },
+    { type: "F4", positions: [], moveRange: 4, fireRange: 2, displayed: false },
+    { type: "C1", positions: [], moveRange: 3, fireRange: 2, displayed: false },
+    { type: "C2", positions: [], moveRange: 3, fireRange: 2, displayed: false },
+    { type: "C3", positions: [], moveRange: 3, fireRange: 2, displayed: false },
+    { type: "D1", positions: [], moveRange: 2, fireRange: 3, displayed: false },
+    { type: "D2", positions: [], moveRange: 2, fireRange: 3, displayed: false },
+    { type: "P1", positions: [], moveRange: 1, fireRange: 5, displayed: false },
   ];
 }
 
