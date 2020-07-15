@@ -8,7 +8,7 @@ import ShipSelector from './shipSelector';
 export default function Game() {
   const [myTurn, setMyTurn] = useState(true);
   const [gameStarted, setGameStarted] = useState(false);
-  const [action, setAction] = useState('moving'); // or firing
+  const [action, setAction] = useState();
   const [grid, setGrid] = useState(generateGrid());
   const [ships, setShips] = useState(getNewShips());
 
@@ -57,6 +57,14 @@ export default function Game() {
     );
   }
 
+  const handlePlay = () => {
+    setGameStarted(true);
+  }
+
+  const handleAction = (action) => {
+    setAction(action);
+  }
+
   const renderShips = () => {
     return ships.map(ship => {
       const dragStart = (e) => {
@@ -64,9 +72,9 @@ export default function Game() {
       }
       return(
         ship.displayed ?
-        <button className="ship-selector-button" disabled>{ship.type}</button>
+        <button className="normal-button" disabled>{ship.type}</button>
         :
-        <button draggable onDragStart={dragStart} className="ship-selector-button">{ship.type}</button>
+        <button draggable onDragStart={dragStart}>{ship.type}</button>
       )
     })
   }
@@ -79,12 +87,18 @@ export default function Game() {
       <div className="shipgrid-container">
         <div>{renderGrid()}</div>
         {!gameStarted && 
-          <div className="select-ships-container">
+          <div className="select-option-container">
             {renderShips()}
             <button className="reset-button" onClick={() => handleReset()}>Reset</button>
             {allShipsDisplayed() && 
-              <button className="play-button">Play</button>
+              <button className="play-button" onClick={() => handlePlay()}>Play</button>
             }
+          </div>
+        }
+        {gameStarted &&
+          <div className="select-option-container">
+            <button onClick={() => handleAction('move')}>Move</button>
+            <button onClick={() => handleAction('fire')}>Fire</button>
           </div>
         }
       </div>

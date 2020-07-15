@@ -20,10 +20,6 @@ export default function Grid({ grid, myTurn, gameStarted, onShipDrop }) {
     // }
   };
 
-  const handleReset = () => {
-    
-  }
-
   const renderSquares = () => {
     return grid.map((row, i) => {
       return row.map((cell, j) => {
@@ -45,7 +41,6 @@ export default function Grid({ grid, myTurn, gameStarted, onShipDrop }) {
   return (
     <div className="grid-container">
       <div className="grid">{renderSquares()}</div>
-      <button onClick={handleReset}>Reset</button>
     </div>
   );
 }

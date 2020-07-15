@@ -5,13 +5,6 @@ const Cell = ({ cell, i, j, handleHover, handleClick, gameStarted, onShipDrop })
   if (cell.status === "label") {
     return <div className="grid-square label">{cell.label}</div>;
   }
-  if (gameStarted) {
-    return (
-      <div
-        className={updateCellClass(cell)}
-      />
-    );
-  }
   const dropIt = (e) => {
     e.stopPropagation();
     e.preventDefault();
