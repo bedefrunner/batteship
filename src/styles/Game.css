@@ -32,6 +32,8 @@ button {
   margin-left: 0%;
   margin-top: 1em;
   outline: none;
+  box-shadow: 2px 2px 2px rgb(235, 235, 235);
+
 }
 
 .button-active {
@@ -60,12 +62,6 @@ button {
   background-color: rgb(13, 179, 13);
 }
 
-.move-fire-button {
-  width: 100px;
-  height: 30px;
-  margin: 10px auto;
-}
-
 .normal-button {
   width: 50px;
   margin-left: 0%;
@@ -73,6 +69,8 @@ button {
 
 .button-surrender {
   width: 100px;
+  height: 30px;
+  border-radius: 5px;
   background-color: indianred;
   margin-left: 0%;
 }
